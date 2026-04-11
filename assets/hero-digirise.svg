@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#163d59"/>
+      <stop offset="0.5" stop-color="#16526d"/>
+      <stop offset="1" stop-color="#0e2536"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="35%">
+      <stop offset="0" stop-color="#88f8ff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#88f8ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="crystal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8ffff"/>
+      <stop offset="0.45" stop-color="#7be9ff"/>
+      <stop offset="1" stop-color="#36bfff"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="420" rx="28" fill="url(#bg)"/>
+  <circle cx="450" cy="170" r="140" fill="url(#glow)"/>
+  <g fill="#102d43" opacity="0.8">
+    <path d="M40 360 L40 210 L70 170 L100 210 L100 360Z"/>
+    <path d="M120 360 L120 170 L160 110 L200 170 L200 360Z"/>
+    <path d="M220 360 L220 220 L245 185 L270 220 L270 360Z"/>
+    <path d="M650 360 L650 220 L675 185 L700 220 L700 360Z"/>
+    <path d="M710 360 L710 165 L750 95 L790 165 L790 360Z"/>
+    <path d="M810 360 L810 210 L840 170 L870 210 L870 360Z"/>
+  </g>
+  <g transform="translate(450 185)">
+    <polygon points="0,-92 58,-32 38,90 -38,90 -58,-32" fill="url(#crystal)" stroke="#efffff" stroke-width="6"/>
+    <polyline points="0,-92 0,90" stroke="#efffff" stroke-opacity="0.65" stroke-width="4"/>
+    <polyline points="-58,-32 0,-12 58,-32" stroke="#efffff" stroke-opacity="0.55" stroke-width="4" fill="none"/>
+  </g>
+  <g transform="translate(150 278)">
+    <circle cx="0" cy="0" r="40" fill="#3fa3ff"/>
+    <rect x="-28" y="38" width="56" height="74" rx="18" fill="#59b8ff"/>
+    <rect x="-19" y="54" width="38" height="34" rx="10" fill="#b8efff"/>
+    <line x1="-12" y1="112" x2="-25" y2="150" stroke="#59b8ff" stroke-width="10" stroke-linecap="round"/>
+    <line x1="12" y1="112" x2="25" y2="150" stroke="#59b8ff" stroke-width="10" stroke-linecap="round"/>
+    <line x1="-28" y1="70" x2="-62" y2="95" stroke="#59b8ff" stroke-width="10" stroke-linecap="round"/>
+    <line x1="28" y1="70" x2="62" y2="48" stroke="#59b8ff" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="-12" cy="-6" r="8" fill="#12263c"/>
+    <circle cx="12" cy="-6" r="8" fill="#12263c"/>
+    <path d="M-10 16 Q0 24 10 16" stroke="#12263c" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <line x1="0" y1="-40" x2="0" y2="-58" stroke="#59b8ff" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="0" cy="-64" r="10" fill="#8df6ff"/>
+  </g>
+  <g transform="translate(240 135)">
+    <ellipse cx="0" cy="0" rx="28" ry="40" fill="#88e8ff"/>
+    <circle cx="0" cy="-18" r="24" fill="#8ceeff"/>
+    <path d="M-22 -16 L-52 -28 L-32 -3Z" fill="#d5fbff"/>
+    <path d="M22 -16 L52 -28 L32 -3Z" fill="#d5fbff"/>
+    <path d="M-6 -26 q6 -8 12 0" stroke="#1e4766" stroke-width="3" fill="none"/>
+    <circle cx="-8" cy="-16" r="3.5" fill="#17324a"/>
+    <circle cx="8" cy="-16" r="3.5" fill="#17324a"/>
+    <path d="M-8 -8 Q0 -2 8 -8" stroke="#17324a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <rect x="-10" y="8" width="20" height="24" rx="6" fill="#1b5d8a"/>
+    <line x1="-6" y1="32" x2="-16" y2="56" stroke="#1b5d8a" stroke-width="6" stroke-linecap="round"/>
+    <line x1="6" y1="32" x2="16" y2="56" stroke="#1b5d8a" stroke-width="6" stroke-linecap="round"/>
+    <line x1="-12" y1="20" x2="-28" y2="32" stroke="#1b5d8a" stroke-width="6" stroke-linecap="round"/>
+    <line x1="12" y1="20" x2="28" y2="14" stroke="#1b5d8a" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(650 258)">
+    <circle cx="0" cy="-58" r="26" fill="#ffd797"/>
+    <rect x="-36" y="-28" width="72" height="100" rx="20" fill="#ffcd7c"/>
+    <rect x="-18" y="2" width="36" height="50" rx="12" fill="#f4a85e"/>
+    <line x1="-22" y1="72" x2="-30" y2="112" stroke="#ffcd7c" stroke-width="10" stroke-linecap="round"/>
+    <line x1="22" y1="72" x2="30" y2="112" stroke="#ffcd7c" stroke-width="10" stroke-linecap="round"/>
+    <line x1="-36" y1="-4" x2="-70" y2="28" stroke="#ffcd7c" stroke-width="10" stroke-linecap="round"/>
+    <line x1="36" y1="-4" x2="70" y2="-18" stroke="#ffcd7c" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="-9" cy="-60" r="4.5" fill="#1d2a3a"/>
+    <circle cx="9" cy="-60" r="4.5" fill="#1d2a3a"/>
+    <path d="M-10 -44 Q0 -35 10 -44" stroke="#1d2a3a" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(618 82)">
+    <circle cx="0" cy="0" r="36" fill="#ef613d" stroke="#9f260f" stroke-width="6"/>
+    <circle cx="-10" cy="-8" r="5" fill="#4b1508"/>
+    <circle cx="10" cy="-8" r="5" fill="#4b1508"/>
+    <path d="M-14 13 Q0 -2 14 13" stroke="#4b1508" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <g stroke="#ef613d" stroke-width="11" stroke-linecap="round">
+      <line x1="0" y1="-36" x2="0" y2="-56"/>
+      <line x1="25" y1="-25" x2="39" y2="-39"/>
+      <line x1="36" y1="0" x2="56" y2="0"/>
+      <line x1="25" y1="25" x2="39" y2="39"/>
+      <line x1="0" y1="36" x2="0" y2="56"/>
+      <line x1="-25" y1="25" x2="-39" y2="39"/>
+      <line x1="-36" y1="0" x2="-56" y2="0"/>
+      <line x1="-25" y1="-25" x2="-39" y2="-39"/>
+    </g>
+  </g>
+  <text x="38" y="42" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#e0fff7">Datový krystal čeká…</text>
+  <text x="38" y="72" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#d4f0ff">Otevři kartu, označ svůj postup a sleduj, jak zachraňuješ Digiříši.</text>
+</svg>
