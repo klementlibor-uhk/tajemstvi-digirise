@@ -1,117 +1,14 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="cs">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Údolí dat</title>
+  <title>Údolí dat | Tajemství Digiříše</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="sub-wrap">
-    <div class="sub-shell">
-      <div class="sub-grid">
-        <section class="left-world">
-          <div class="left-cloud one"></div>
-          <div class="left-cloud two"></div>
-          <div class="river"></div>
-          <div class="river-lines"></div>
-
-          <div class="top-panel">
-            <div class="mini">✨ Moje cesta údolím</div>
-            <h1>ÚDOLÍ DAT</h1>
-
-            <div class="name-grid">
-              <div class="field">
-                <label for="studentName">Jméno žáka</label>
-                <input id="studentName" type="text" placeholder="Napiš své jméno">
-              </div>
-
-              <div class="progress-box">
-                <div class="progress-meta">
-                  <span>Vyplněno: <span id="completedCount">0</span> z 5</span>
-                  <span id="levelText">Začínám</span>
-                </div>
-                <div class="progress-line">
-                  <div class="progress-fill" id="progressFill"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button class="btn save" id="saveBtn">Uložit</button>
-              <button class="btn print" id="printBtn">Vytisknout</button>
-              <button class="btn reset" id="resetBtn">Vymazat</button>
-            </div>
-
-            <div class="status hidden-print" id="statusBox">Pokrok je uložený v tomto zařízení.</div>
-          </div>
-
-          <div class="data-chip" style="left:10%; top:43%;">
-            <span class="bubble">🔎</span><span>Hledám</span>
-          </div>
-          <div class="data-chip" style="left:29%; top:60%;">
-            <span class="bubble">📋</span><span>Tabulka</span>
-          </div>
-          <div class="data-chip" style="right:11%; top:40%;">
-            <span class="bubble">📈</span><span>Graf</span>
-          </div>
-          <div class="data-chip" style="right:18%; top:67%;">
-            <span class="bubble">01</span><span>Data</span>
-          </div>
-          <div class="data-chip" style="left:44%; top:76%;">
-            <span class="bubble">ℹ️</span><span>Info</span>
-          </div>
-
-          <div class="tile" style="left:16%; top:72%; transform:rotate(-12deg)">🎵</div>
-          <div class="tile" style="right:21%; top:56%; transform:rotate(10deg)">🖼️</div>
-          <div class="tile" style="left:62%; top:46%; transform:rotate(12deg)">💾</div>
-
-          <div class="left-character character-fairy">
-            <div class="emoji">🧚</div>
-            <div class="name">Průvodce daty</div>
-          </div>
-
-          <div class="left-character character-boy">
-            <div class="emoji">🧒</div>
-            <div class="name">Badatel</div>
-          </div>
-
-          <div class="left-character character-girl">
-            <div class="emoji">👧</div>
-            <div class="name">Badatelka</div>
-          </div>
-
-          <div class="left-character character-robot">
-            <div class="emoji">🤖</div>
-            <div class="name">Robot pomocník</div>
-          </div>
-        </section>
-
-        <section class="right-panel">
-          <a class="back-link" href="index.html">← Zpět do Digiříše</a>
-
-          <div class="header-card">
-            <h2>Moje cíle v Údolí dat</h2>
-            <p>U každé věty vyber, jak se ti to daří. Můžeš připsat i krátkou poznámku.</p>
-          </div>
-
-          <div id="goalsContainer"></div>
-
-          <div class="legend" style="margin-top:16px">
-            <div><strong>Jak se hodnotím?</strong></div>
-            <div class="pills">
-              <span>J = Ještě ne</span>
-              <span>Č = Částečně</span>
-              <span>T = Téměř</span>
-              <span>Ú = Úplně</span>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
-
+<body class="no-scroll" data-view="page" data-page="udoli-dat">
+  <div class="page-shell" id="page-app"></div>
+  <script src="data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,201 +1,28 @@
 
-const goals = [
-  "Vím, co chci zjistit.",
-  "Umím získat a zapsat data.",
-  "Přečtu data z obrázku a tabulky.",
-  "Řeknu, co jsem z dat zjistil/a.",
-  "Své rozhodnutí ukážu v datech."
-];
-
-const levels = [
-  { label: "Ještě ne", short: "J", value: 0 },
-  { label: "Částečně", short: "Č", value: 1 },
-  { label: "Téměř", short: "T", value: 2 },
-  { label: "Úplně", short: "Ú", value: 3 }
-];
-
-const STORAGE_KEY = "udoli-dat-demo-v1";
-
-function defaultState() {
-  return {
-    studentName: "",
-    notes: Array(goals.length).fill(""),
-    answers: Array(goals.length).fill(null)
-  };
-}
-
-let state = defaultState();
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const parsed = JSON.parse(raw);
-    state = {
-      ...defaultState(),
-      ...parsed,
-      notes: Array.isArray(parsed.notes) ? parsed.notes : Array(goals.length).fill(""),
-      answers: Array.isArray(parsed.answers) ? parsed.answers : Array(goals.length).fill(null)
-    };
-  } catch (e) {
-    localStorage.removeItem(STORAGE_KEY);
+(function () {
+  const data = window.DIGIRISE_DATA;
+  if (!data) return;
+  const STORAGE_KEY = 'digirise-progress-v2';
+  const order = ['udoli-dat','mesto-modelu','chram-symbolu','jeskyne-ukolu','roboticka-laborator','informacni-citadela','datove-trziste','komnata-technomagu','sitova-pevnost'];
+  const emojiMap = {'plan-meho-postupu':'📘','udoli-dat':'📊','mesto-modelu':'🗺️','chram-symbolu':'🔣','jeskyne-ukolu':'🪶','roboticka-laborator':'🤖','informacni-citadela':'🏛️','datove-trziste':'🧺','komnata-technomagu':'🪄','sitova-pevnost':'🛡️'};
+  const ratings = data.ratings;
+  function todayString(){ return new Date().toLocaleDateString('cs-CZ'); }
+  function emptyPageState(pageId){ const page = data.pages[pageId]; return { ratings:Array((page.tasks||[]).length).fill(null), dates:Array((page.tasks||[]).length).fill(''), notes:['',''] }; }
+  function loadState(){ try { const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); const state = { pages:{} }; Object.keys(data.pages).forEach((pageId)=>{ if(pageId==='plan-meho-postupu') return; state.pages[pageId] = Object.assign(emptyPageState(pageId), parsed.pages && parsed.pages[pageId] ? parsed.pages[pageId] : {}); }); return state; } catch(e){ return { pages:Object.fromEntries(order.map((pageId)=>[pageId, emptyPageState(pageId)])) }; } }
+  let state = loadState();
+  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function countAll(){ const result = {filled:0,total:45,counts:{'yet-not':0,partly:0,almost:0,done:0}}; order.forEach((pageId)=>{ const pageState = state.pages[pageId]; pageState.ratings.forEach((rating)=>{ if(rating){ result.filled += 1; result.counts[rating] += 1; } }); }); return result; }
+  function pageFilled(pageId){ return state.pages[pageId].ratings.filter(Boolean).length; }
+  function latestDate(pageId){ const dates = (state.pages[pageId].dates || []).filter(Boolean); return dates.length ? dates[dates.length - 1] : '—'; }
+  function renderHome(){ const grid = document.getElementById('home-grid'); if(!grid) return; const summary = countAll(); const cardsOrder = ['plan-meho-postupu', ...order]; grid.innerHTML = cardsOrder.map((pageId)=>{ const page = data.pages[pageId]; const isPlan = pageId === 'plan-meho-postupu'; const counts = summary.counts; const progress = isPlan ? summary.filled : pageFilled(pageId); const badge = isPlan ? 'Souhrnná karta' : (pageId === 'udoli-dat' ? 'Hotovo jako první' : 'Oblast Digiříše'); const footer = isPlan ? `Vyplněno ${summary.filled} z 45` : `Vyplněno ${progress} z 5`; return `<a class="grid-card ${isPlan ? 'plan' : ''}" href="${pageId}.html"><div class="card-bg" style="background-image:url('${page.image}')"></div><div class="card-body"><div class="card-top"><div class="card-icon">${emojiMap[pageId] || '✨'}</div><div class="card-badge">${badge}</div></div><div><h3 class="card-title">${page.cardTitle}</h3><div class="card-subtitle">${page.subtitle}</div></div>${isPlan ? `<div class="plan-quick-stats"><div class="quick-chip">J: ${counts['yet-not']}</div><div class="quick-chip">Č: ${counts.partly}</div><div class="quick-chip">T: ${counts.almost}</div><div class="quick-chip">Ú: ${counts.done}</div></div>` : `<p class="card-description">${page.description}</p>`}<div class="card-footer"><span>${footer}</span><span>Otevřít →</span></div></div></a>`; }).join(''); }
+  function renderTaskPage(pageId){ const page = data.pages[pageId]; if(!page || !page.tasks) return; document.title = `${page.title} | Tajemství Digiříše`; document.documentElement.style.setProperty('--accent', page.accent); document.documentElement.style.setProperty('--accent2', page.accent2); const container = document.getElementById('page-app'); const pageState = state.pages[pageId]; const filled = pageFilled(pageId); const percent = Math.round((filled / page.tasks.length) * 100); container.innerHTML = `<header class="page-header"><a class="header-home" href="index.html">← Digiříše</a><div class="header-title"><h1>${page.title}</h1><p>${page.subtitle}</p></div><div class="header-progress"><strong>Vyplněno ${filled} z ${page.tasks.length}</strong><div class="progress-line"><span style="width:${percent}%"></span></div></div><div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;"><button class="header-print" type="button" id="print-btn">Vytisknout</button><button class="header-reset" type="button" id="reset-btn">Vymazat</button></div></header><main class="page-main"><section class="poster-card illustration"><div class="illustration-visual"><img src="${page.image}" alt="${page.title}"></div><div class="illustration-caption">${page.description} Vyber u každého úkolu, jak se ti daří, a sleduj svůj postup.</div></section><section class="page-panel"><div class="legend">${ratings.map(r => `<span><b style="background:${r.color}"></b>${r.short} = ${r.label}</span>`).join('')}</div><div class="task-list">${page.tasks.map((task, idx) => `<div class="task-row"><div class="task-number">${idx + 1}</div><div><div class="task-text">${task}</div><div style="font-size:0.76rem;color:var(--muted);margin-top:4px;">Datum zápisu: <span id="task-date-${idx}">${pageState.dates[idx] || '—'}</span></div></div><div class="task-actions">${ratings.map(r => `<button type="button" class="rate-btn ${pageState.ratings[idx] === r.key ? 'active' : ''}" data-page="${pageId}" data-index="${idx}" data-rating="${r.key}" title="${r.label}">${r.short}</button>`).join('')}</div></div>`).join('')}</div><div class="page-footer"><div class="text-box"><label for="note-1">Moje poznámka</label><textarea id="note-1" data-page="${pageId}" data-note-index="0" placeholder="Napíšu si krátkou poznámku…">${pageState.notes[0] || ''}</textarea></div><div class="text-box"><label for="note-2">Co se mi povedlo</label><textarea id="note-2" data-page="${pageId}" data-note-index="1" placeholder="Zapíšu, co už umím…">${pageState.notes[1] || ''}</textarea></div></div></section></main>`;
+    container.querySelector('#print-btn').addEventListener('click', ()=>window.print());
+    container.querySelector('#reset-btn').addEventListener('click', ()=>{ if(!confirm('Opravdu chceš vymazat tuto kartu?')) return; state.pages[pageId] = emptyPageState(pageId); saveState(); renderTaskPage(pageId); });
+    container.querySelectorAll('.rate-btn').forEach((btn)=>{ btn.addEventListener('click', ()=>{ const idx = Number(btn.dataset.index); state.pages[pageId].ratings[idx] = btn.dataset.rating; state.pages[pageId].dates[idx] = todayString(); saveState(); renderTaskPage(pageId); }); });
+    container.querySelectorAll('textarea[data-note-index]').forEach((ta)=>{ ta.addEventListener('input', ()=>{ const noteIdx = Number(ta.dataset.noteIndex); state.pages[pageId].notes[noteIdx] = ta.value; saveState(); }); });
   }
-}
-
-function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-function levelText(totalScore) {
-  if (totalScore <= 3) return "Začínám";
-  if (totalScore <= 8) return "Učím se";
-  if (totalScore <= 12) return "Jde mi to";
-  return "Skvělé";
-}
-
-function updateProgress() {
-  const completedCount = state.answers.filter(v => v !== null).length;
-  const totalScore = state.answers.reduce((sum, item) => sum + (item ?? 0), 0);
-  const progress = Math.round((completedCount / goals.length) * 100);
-
-  const completed = document.getElementById("completedCount");
-  const fill = document.getElementById("progressFill");
-  const level = document.getElementById("levelText");
-  if (completed) completed.textContent = completedCount;
-  if (fill) fill.style.width = progress + "%";
-  if (level) level.textContent = levelText(totalScore);
-}
-
-function showSavedMessage() {
-  const box = document.getElementById("statusBox");
-  if (!box) return;
-  box.style.display = "block";
-  clearTimeout(showSavedMessage.timer);
-  showSavedMessage.timer = setTimeout(() => {
-    box.style.display = "none";
-  }, 1700);
-}
-
-function createGoalCard(goal, index) {
-  const card = document.createElement("div");
-  card.className = "goal-card";
-
-  const head = document.createElement("div");
-  head.className = "goal-head";
-
-  const num = document.createElement("div");
-  num.className = "goal-number";
-  num.textContent = index + 1;
-
-  const text = document.createElement("div");
-  text.className = "goal-text";
-  text.textContent = goal;
-
-  head.appendChild(num);
-  head.appendChild(text);
-  card.appendChild(head);
-
-  const ratingGroup = document.createElement("div");
-  ratingGroup.className = "rating-group";
-
-  levels.forEach(level => {
-    const label = document.createElement("label");
-    label.className = "rating";
-    if (state.answers[index] === level.value) label.classList.add("active");
-
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "goal-" + index;
-    input.value = String(level.value);
-    if (state.answers[index] === level.value) input.checked = true;
-
-    input.addEventListener("change", () => {
-      state.answers[index] = level.value;
-      renderGoals();
-      updateProgress();
-    });
-
-    const letter = document.createElement("span");
-    letter.className = "letter";
-    letter.textContent = level.short;
-
-    const caption = document.createElement("span");
-    caption.textContent = level.label;
-
-    label.appendChild(input);
-    label.appendChild(letter);
-    label.appendChild(caption);
-    ratingGroup.appendChild(label);
-  });
-
-  card.appendChild(ratingGroup);
-
-  const note = document.createElement("textarea");
-  note.className = "note";
-  note.placeholder = "Moje poznámka nebo příklad…";
-  note.value = state.notes[index] || "";
-  note.addEventListener("input", (e) => {
-    state.notes[index] = e.target.value;
-  });
-
-  card.appendChild(note);
-  return card;
-}
-
-function renderGoals() {
-  const container = document.getElementById("goalsContainer");
-  if (!container) return;
-  container.innerHTML = "";
-  goals.forEach((goal, index) => {
-    container.appendChild(createGoalCard(goal, index));
-  });
-}
-
-function bindTopPanel() {
-  const studentName = document.getElementById("studentName");
-  if (studentName) {
-    studentName.value = state.studentName || "";
-    studentName.addEventListener("input", (e) => {
-      state.studentName = e.target.value;
-    });
+  function renderSummaryPage(){ const page = data.pages['plan-meho-postupu']; document.title = `${page.title} | Tajemství Digiříše`; document.documentElement.style.setProperty('--accent', page.accent); document.documentElement.style.setProperty('--accent2', page.accent2); const summary = countAll(); const container = document.getElementById('summary-app'); const countByPage = order.map((pageId)=>({ pageId, title:data.pages[pageId].cardTitle, filled:pageFilled(pageId), date:latestDate(pageId), ratings:state.pages[pageId].ratings, tasks:data.pages[pageId].tasks })); const chartMax = Math.max(1, ...Object.values(summary.counts)); const chartItems = [['Ještě ne','yet-not','#fef08a'],['Částečně','partly','#facc15'],['Téměř','almost','#fb923c'],['Úplně','done','#fca5a5']]; container.innerHTML = `<header class="page-header"><a class="header-home" href="index.html">← Digiříše</a><div class="header-title"><h1>${page.title}</h1><p>Souhrn celé cesty všemi 9 místy Digiříše</p></div><div class="header-progress"><strong>Vyplněno ${summary.filled} z ${summary.total}</strong><div class="progress-line"><span style="width:${Math.round(summary.filled / summary.total * 100)}%"></span></div></div><div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;"><button class="header-print" type="button" id="print-summary">Vytisknout</button></div></header><main class="summary-main"><section class="summary-panel"><div class="summary-top"><div class="summary-count">Celkový přehled 45 políček</div><div class="card-badge" style="background:rgba(37,99,235,0.12);color:#1d4ed8;">Souhrnná karta</div></div><div class="legend">${ratings.map(r => `<span><b style="background:${r.color}"></b>${r.short} = ${r.label}</span>`).join('')}</div><div class="summary-grid-wrap"><div class="summary-groups">${countByPage.map(item => `<div class="summary-group"><div class="summary-group-name">${item.title}</div><div class="dot-row">${item.ratings.map((rating, idx) => `<div class="dot" data-rating="${rating || ''}" title="${item.tasks[idx]}${item.ratings[idx] ? ' — ' + (state.pages[item.pageId].dates[idx] || '') : ''}"></div>`).join('')}</div><div class="summary-group-date">${item.filled} / 5 · ${item.date}</div></div>`).join('')}</div></div></section><section class="summary-side"><div class="chart-panel"><h2>Statistika odpovědí</h2><div class="chart-grid">${chartItems.map(([label,key,color])=>{ const value = summary.counts[key]; const height = Math.max(6, Math.round((value / chartMax) * 120)); return `<div class="chart-col"><div class="chart-value">${value}</div><div class="chart-bar-wrap"><div class="chart-bar" style="height:${height}px;background:${color};"></div></div><div class="chart-label">${label}</div></div>`; }).join('')}</div></div><div class="area-panel"><h2>Postup podle oblastí</h2><div class="area-list">${countByPage.map(item => `<div class="area-item"><strong>${item.title}</strong><div class="small-progress"><span style="width:${item.filled / 5 * 100}%"></span></div><div class="area-meta">Vyplněno ${item.filled} z 5 · ${item.date}</div></div>`).join('')}</div></div></section></main>`;
+    container.querySelector('#print-summary').addEventListener('click', ()=>window.print());
   }
-
-  const saveBtn = document.getElementById("saveBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const printBtn = document.getElementById("printBtn");
-
-  if (saveBtn) {
-    saveBtn.addEventListener("click", () => {
-      saveState();
-      showSavedMessage();
-    });
-  }
-
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      const ok = window.confirm("Opravdu chceš smazat všechen uložený pokrok na této stránce?");
-      if (!ok) return;
-      state = defaultState();
-      localStorage.removeItem(STORAGE_KEY);
-      if (studentName) studentName.value = "";
-      renderGoals();
-      updateProgress();
-      const box = document.getElementById("statusBox");
-      if (box) box.style.display = "none";
-    });
-  }
-
-  if (printBtn) {
-    printBtn.addEventListener("click", () => {
-      window.print();
-    });
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (!document.getElementById("goalsContainer")) return;
-  loadState();
-  bindTopPanel();
-  renderGoals();
-  updateProgress();
-});
+  document.addEventListener('DOMContentLoaded', ()=>{ if(document.body.dataset.view === 'home') renderHome(); if(document.body.dataset.view === 'page') renderTaskPage(document.body.dataset.page); if(document.body.dataset.view === 'summary') renderSummaryPage(); });
+})();
