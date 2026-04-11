@@ -3,12 +3,71 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PLÁN MÉHO POSTUPU | Tajemství Digiříše</title>
+  <title>Plán mého postupu</title>
   <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="script.js"></script>
 </head>
-<body class="no-scroll" data-view="summary" data-page="plan-meho-postupu">
-  <div class="page-shell" id="summary-app"></div>
-  <script src="data.js"></script>
-  <script src="script.js"></script>
+<body class="" data-page="plan">
+  <div class="site-frame">
+    
+<div class="plan-page">
+  <div class="header-bar">
+    <a class="back-link" href="index.html">← Zpět do Digiříše</a>
+    <div class="top-title">PLÁN MÉHO POSTUPU</div>
+    <div class="header-right">
+      <div class="name-box" style="padding:8px 12px;">
+        <label style="margin-bottom:4px;">Moje jméno</label>
+        <input data-student-name type="text" placeholder="Napiš své jméno" style="padding:8px 10px;font-size:16px;">
+      </div>
+      <div class="progress-pill">Vyplněno <span data-plan-total>0 z 45</span></div>
+      <div class="progress-pill">Hotovo <span id="overallPct">0 %</span></div>
+      <button id="resetAllBtn" class="action-btn danger">Vymazat vše</button>
+    </div>
+  </div>
+  <div class="plan-body">
+    <section class="plan-panel plan-feature">
+      <h2>Souhrn celé hry</h2>
+      <div class="card-hint">Tahle karta ukazuje postup ze všech devíti oblastí. Každé políčko představuje jednu činnost.</div>
+      <div class="summary-big">
+        <div class="big-count">Vyplněno <span data-plan-total>0 z 45</span></div>
+        <div class="status-counts">
+          <div class="count-box"><div class="label">J = Ještě ne</div><div class="value" id="count-J">0</div></div>
+          <div class="count-box"><div class="label">Č = Částečně</div><div class="value" id="count-C">0</div></div>
+          <div class="count-box"><div class="label">T = Téměř</div><div class="value" id="count-T">0</div></div>
+          <div class="count-box"><div class="label">Ú = Úplně</div><div class="value" id="count-U">0</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="plan-panel plan-grid-wrap">
+      <h3>45 kroků Digiříše</h3>
+      <div class="legend-row">
+        <div class="legend-chip"><span class="legend-dot" style="background:var(--status-j)"></span>J = Ještě ne</div>
+        <div class="legend-chip"><span class="legend-dot" style="background:var(--status-c)"></span>Č = Částečně</div>
+        <div class="legend-chip"><span class="legend-dot" style="background:var(--status-t)"></span>T = Téměř</div>
+        <div class="legend-chip"><span class="legend-dot" style="background:var(--status-u)"></span>Ú = Úplně</div>
+      </div>
+      <div id="planGrid" class="plan-grid"></div>
+    </section>
+
+    <section class="plan-side">
+      <div class="plan-panel">
+        <h3>Sloupcový přehled</h3>
+        <div id="chartBars" class="chart-bars"></div>
+      </div>
+      <div class="plan-panel">
+        <h3>Postup po oblastech</h3>
+        <div id="areasList" class="areas-list"></div>
+      </div>
+      <div class="plan-panel" style="overflow:auto;">
+        <h3>Poslední záznamy</h3>
+        <div id="recentList" class="recent-list"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+  </div>
 </body>
 </html>

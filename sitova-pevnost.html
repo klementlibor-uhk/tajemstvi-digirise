@@ -3,12 +3,53 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Síťová pevnost | Tajemství Digiříše</title>
+  <title>Síťová pevnost</title>
   <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="script.js"></script>
 </head>
-<body class="no-scroll" data-view="page" data-page="sitova-pevnost">
-  <div class="page-shell" id="page-app"></div>
-  <script src="data.js"></script>
-  <script src="script.js"></script>
+<body class="" data-page="area" data-area="sitova-pevnost">
+  <div class="site-frame">
+    
+<div class="area-page">
+  <div class="header-bar">
+    <a class="back-link" href="index.html">← Digiříše</a>
+    <div class="top-title" id="areaPageTitle">Síťová pevnost</div>
+    <div class="header-right">
+      <div class="name-box" style="padding:8px 12px;">
+        <label style="margin-bottom:4px;">Moje jméno</label>
+        <input data-student-name type="text" placeholder="Napiš své jméno" style="padding:8px 10px;font-size:16px;">
+      </div>
+      <div class="progress-pill">Vyplněno <span id="areaProgress">0 z 5</span></div>
+      <button id="resetAreaBtn" class="action-btn secondary">Vymazat</button>
+    </div>
+  </div>
+  <div class="area-body">
+    <section class="visual-panel">
+      <div id="heroVisual" class="visual-bg"></div>
+      <div class="visual-wash"></div>
+      <div class="visual-caption">
+        <h2 id="heroTitle">Síťová pevnost</h2>
+        <p id="heroDesc">Chaotron vytvořil uzly, pasti a falešné stránky.</p>
+      </div>
+    </section>
+    <section class="content-panel">
+      <div id="legendTarget"></div>
+      <div id="stepsTarget" class="steps-panel"></div>
+      <div class="text-grid">
+        <div class="text-box">
+          <label for="areaNote">Moje poznámka</label>
+          <textarea id="areaNote" placeholder="Napíšu si krátkou poznámku…"></textarea>
+        </div>
+        <div class="text-box">
+          <label for="areaSuccess">Co se mi povedlo</label>
+          <textarea id="areaSuccess" placeholder="Zapíšu, co už umím…"></textarea>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+  </div>
 </body>
 </html>

@@ -5,46 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tajemství Digiříše</title>
   <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="script.js"></script>
 </head>
-<body class="no-scroll" data-view="home">
-  <div class="site-shell">
-    <div class="main-frame">
-      <section class="hero">
-        <div class="hero-card">
-          <div class="hero-badge">✨ Hlavní rozcestník</div>
-          <h1 class="hero-title">Tajemství Digiříše</h1>
-          <div class="hero-story">
-            <div class="hero-text">
-              <p>Digiříše bývala krásná a chytrá země, ve které spolu žily data, roboti, technomágové i obyčejní lidé.</p>
-              <p>Všechno zde fungovalo díky tajemnému Datovému krystalu, který udržoval pořádek ve světech čísel, obrázků, modelů, programů a sítí.</p>
-              <p>Ale jednoho dne se objevil <strong style="color:#b91c1c;">Chaotron</strong> – zlý virus, který se do Digiříše vplížil přes zakázanou bránu.</p>
-              <p><strong>Chaotron je rychlý, zákeřný a hlavně… strašně rád poplete úplně všechno, na co sáhne!</strong></p>
-            </div>
-            <div class="hero-mini-panels">
-              <div class="mini-panel">
-                <h3>Tvůj úkol</h3>
-                <p>Projdi Digiříši, plň úkoly a pomoz vrátit řád do všech míst.</p>
-              </div>
-              <div class="mini-panel">
-                <h3>Jak začít</h3>
-                <p>Vyber si jednu kartu. První je souhrnná karta Plán mého postupu.</p>
-              </div>
-            </div>
-          </div>
+<body class="" data-page="main">
+  <div class="site-frame">
+    
+<div class="main-page" data-student-name-wrap>
+  <section class="main-hero">
+    <div class="panel intro-panel">
+      <div class="badge">✨ HLAVNÍ ROZCESTNÍK</div>
+      <div class="title-board"><h1>Tajemství Digiříše</h1></div>
+      <div class="story-grid">
+        <div class="story-text">
+          <p>Digiříše bývala krásná a chytrá země, ve které spolu žily data, roboti, technomágové i obyčejní lidé.</p>
+          <p>Všechno zde fungovalo díky tajemnému Datovému krystalu, který udržoval pořádek ve světech čísel, obrázků, modelů, programů a sítí.</p>
+          <p>Ale jednoho dne se objevil <strong style="color:#cf4b46">Chaotron</strong> – zlý virus, který se do Digiříše vplížil přes zakázanou bránu.</p>
+          <p><strong>Chaotron je rychlý, zákeřný a hlavně… strašně rád poplete úplně všechno, na co sáhne!</strong></p>
         </div>
-        <div class="poster-card">
-          <img src="assets/tajemstvi-digirise-poster.png" alt="Tajemství Digiříše">
-          <div class="poster-overlay">Datový krystal čeká. Otevři kartu, označ svůj postup a sleduj, jak postupně zachraňuješ celou Digiříši.</div>
+        <div class="story-side">
+          <div class="small-info"><strong>Tvůj úkol</strong>Projdi Digiříši, plň úkoly a pomoz vrátit řád do všech míst.</div>
+          <div class="small-info"><strong>Jak začít</strong>První je souhrnná karta <strong>Plán mého postupu</strong>. Pak otevři libovolnou oblast.</div>
         </div>
-      </section>
-      <section class="grid-wrap">
-        <h2 class="grid-title">Karty Digiříše</h2>
-        <p class="grid-subtitle">Rozcestník je nově v rozložení 5 × 2. První karta je výrazná souhrnná karta s 45 políčky a statistikou.</p>
-        <div class="home-grid" id="home-grid"></div>
-      </section>
+      </div>
+      <div class="intro-footer">
+        <div class="name-box">
+          <label for="studentNameMain">Moje jméno</label>
+          <input id="studentNameMain" data-student-name type="text" placeholder="Napiš své jméno">
+        </div>
+        <div class="small-info"><strong>Celkový postup</strong>Vyplněno <span id="mainTotalProgress">0 z 45</span>. Na kartách uvidíš, kolik už máš hotovo.</div>
+      </div>
     </div>
+    <div class="panel hero-illustration">
+      <img src="assets/hero-digirise.svg" alt="Ilustrace Digiříše">
+      <div class="hero-quote">Datový krystal čeká. Otevři kartu, označ svůj postup a sleduj, jak postupně zachraňuješ celou Digiříši.</div>
+    </div>
+  </section>
+  <section id="cardsGrid" class="cards-grid"></section>
+</div>
+
   </div>
-  <script src="data.js"></script>
-  <script src="script.js"></script>
 </body>
 </html>

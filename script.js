@@ -1,28 +1,387 @@
 
-(function () {
-  const data = window.DIGIRISE_DATA;
-  if (!data) return;
-  const STORAGE_KEY = 'digirise-progress-v2';
-  const order = ['udoli-dat','mesto-modelu','chram-symbolu','jeskyne-ukolu','roboticka-laborator','informacni-citadela','datove-trziste','komnata-technomagu','sitova-pevnost'];
-  const emojiMap = {'plan-meho-postupu':'📘','udoli-dat':'📊','mesto-modelu':'🗺️','chram-symbolu':'🔣','jeskyne-ukolu':'🪶','roboticka-laborator':'🤖','informacni-citadela':'🏛️','datove-trziste':'🧺','komnata-technomagu':'🪄','sitova-pevnost':'🛡️'};
-  const ratings = data.ratings;
-  function todayString(){ return new Date().toLocaleDateString('cs-CZ'); }
-  function emptyPageState(pageId){ const page = data.pages[pageId]; return { ratings:Array((page.tasks||[]).length).fill(null), dates:Array((page.tasks||[]).length).fill(''), notes:['',''] }; }
-  function loadState(){ try { const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); const state = { pages:{} }; Object.keys(data.pages).forEach((pageId)=>{ if(pageId==='plan-meho-postupu') return; state.pages[pageId] = Object.assign(emptyPageState(pageId), parsed.pages && parsed.pages[pageId] ? parsed.pages[pageId] : {}); }); return state; } catch(e){ return { pages:Object.fromEntries(order.map((pageId)=>[pageId, emptyPageState(pageId)])) }; } }
-  let state = loadState();
-  function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-  function countAll(){ const result = {filled:0,total:45,counts:{'yet-not':0,partly:0,almost:0,done:0}}; order.forEach((pageId)=>{ const pageState = state.pages[pageId]; pageState.ratings.forEach((rating)=>{ if(rating){ result.filled += 1; result.counts[rating] += 1; } }); }); return result; }
-  function pageFilled(pageId){ return state.pages[pageId].ratings.filter(Boolean).length; }
-  function latestDate(pageId){ const dates = (state.pages[pageId].dates || []).filter(Boolean); return dates.length ? dates[dates.length - 1] : '—'; }
-  function renderHome(){ const grid = document.getElementById('home-grid'); if(!grid) return; const summary = countAll(); const cardsOrder = ['plan-meho-postupu', ...order]; grid.innerHTML = cardsOrder.map((pageId)=>{ const page = data.pages[pageId]; const isPlan = pageId === 'plan-meho-postupu'; const counts = summary.counts; const progress = isPlan ? summary.filled : pageFilled(pageId); const badge = isPlan ? 'Souhrnná karta' : (pageId === 'udoli-dat' ? 'Hotovo jako první' : 'Oblast Digiříše'); const footer = isPlan ? `Vyplněno ${summary.filled} z 45` : `Vyplněno ${progress} z 5`; return `<a class="grid-card ${isPlan ? 'plan' : ''}" href="${pageId}.html"><div class="card-bg" style="background-image:url('${page.image}')"></div><div class="card-body"><div class="card-top"><div class="card-icon">${emojiMap[pageId] || '✨'}</div><div class="card-badge">${badge}</div></div><div><h3 class="card-title">${page.cardTitle}</h3><div class="card-subtitle">${page.subtitle}</div></div>${isPlan ? `<div class="plan-quick-stats"><div class="quick-chip">J: ${counts['yet-not']}</div><div class="quick-chip">Č: ${counts.partly}</div><div class="quick-chip">T: ${counts.almost}</div><div class="quick-chip">Ú: ${counts.done}</div></div>` : `<p class="card-description">${page.description}</p>`}<div class="card-footer"><span>${footer}</span><span>Otevřít →</span></div></div></a>`; }).join(''); }
-  function renderTaskPage(pageId){ const page = data.pages[pageId]; if(!page || !page.tasks) return; document.title = `${page.title} | Tajemství Digiříše`; document.documentElement.style.setProperty('--accent', page.accent); document.documentElement.style.setProperty('--accent2', page.accent2); const container = document.getElementById('page-app'); const pageState = state.pages[pageId]; const filled = pageFilled(pageId); const percent = Math.round((filled / page.tasks.length) * 100); container.innerHTML = `<header class="page-header"><a class="header-home" href="index.html">← Digiříše</a><div class="header-title"><h1>${page.title}</h1><p>${page.subtitle}</p></div><div class="header-progress"><strong>Vyplněno ${filled} z ${page.tasks.length}</strong><div class="progress-line"><span style="width:${percent}%"></span></div></div><div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;"><button class="header-print" type="button" id="print-btn">Vytisknout</button><button class="header-reset" type="button" id="reset-btn">Vymazat</button></div></header><main class="page-main"><section class="poster-card illustration"><div class="illustration-visual"><img src="${page.image}" alt="${page.title}"></div><div class="illustration-caption">${page.description} Vyber u každého úkolu, jak se ti daří, a sleduj svůj postup.</div></section><section class="page-panel"><div class="legend">${ratings.map(r => `<span><b style="background:${r.color}"></b>${r.short} = ${r.label}</span>`).join('')}</div><div class="task-list">${page.tasks.map((task, idx) => `<div class="task-row"><div class="task-number">${idx + 1}</div><div><div class="task-text">${task}</div><div style="font-size:0.76rem;color:var(--muted);margin-top:4px;">Datum zápisu: <span id="task-date-${idx}">${pageState.dates[idx] || '—'}</span></div></div><div class="task-actions">${ratings.map(r => `<button type="button" class="rate-btn ${pageState.ratings[idx] === r.key ? 'active' : ''}" data-page="${pageId}" data-index="${idx}" data-rating="${r.key}" title="${r.label}">${r.short}</button>`).join('')}</div></div>`).join('')}</div><div class="page-footer"><div class="text-box"><label for="note-1">Moje poznámka</label><textarea id="note-1" data-page="${pageId}" data-note-index="0" placeholder="Napíšu si krátkou poznámku…">${pageState.notes[0] || ''}</textarea></div><div class="text-box"><label for="note-2">Co se mi povedlo</label><textarea id="note-2" data-page="${pageId}" data-note-index="1" placeholder="Zapíšu, co už umím…">${pageState.notes[1] || ''}</textarea></div></div></section></main>`;
-    container.querySelector('#print-btn').addEventListener('click', ()=>window.print());
-    container.querySelector('#reset-btn').addEventListener('click', ()=>{ if(!confirm('Opravdu chceš vymazat tuto kartu?')) return; state.pages[pageId] = emptyPageState(pageId); saveState(); renderTaskPage(pageId); });
-    container.querySelectorAll('.rate-btn').forEach((btn)=>{ btn.addEventListener('click', ()=>{ const idx = Number(btn.dataset.index); state.pages[pageId].ratings[idx] = btn.dataset.rating; state.pages[pageId].dates[idx] = todayString(); saveState(); renderTaskPage(pageId); }); });
-    container.querySelectorAll('textarea[data-note-index]').forEach((ta)=>{ ta.addEventListener('input', ()=>{ const noteIdx = Number(ta.dataset.noteIndex); state.pages[pageId].notes[noteIdx] = ta.value; saveState(); }); });
+(function(){
+  const STATUS = {
+    J: { label: "Ještě ne", color: "var(--status-j)" },
+    C: { label: "Částečně", color: "var(--status-c)" },
+    T: { label: "Téměř", color: "var(--status-t)" },
+    U: { label: "Úplně", color: "var(--status-u)" }
+  };
+  const AREA_ORDER = window.DIGIRISE_AREAS || [];
+  const STORAGE_KEY = "digirise-progress-v4";
+  const NOTE_KEYS = ["note","success"];
+  const MAIN_ICONS = {
+    "udoli-dat":"📊","mesto-modelu":"🗺️","chram-symbolu":"🔣","jeskyne-ukolu":"🪜",
+    "roboticka-laborator":"🤖","informacni-citadela":"🏛️","datove-trziste":"🧺",
+    "komnata-technomagu":"🪄","sitova-pevnost":"🛡️","plan":"📘"
+  };
+
+  function createEmptyArea(area){
+    return {
+      statuses: area.steps.map(() => ""),
+      dates: area.steps.map(() => ""),
+      note: "",
+      success: ""
+    };
   }
-  function renderSummaryPage(){ const page = data.pages['plan-meho-postupu']; document.title = `${page.title} | Tajemství Digiříše`; document.documentElement.style.setProperty('--accent', page.accent); document.documentElement.style.setProperty('--accent2', page.accent2); const summary = countAll(); const container = document.getElementById('summary-app'); const countByPage = order.map((pageId)=>({ pageId, title:data.pages[pageId].cardTitle, filled:pageFilled(pageId), date:latestDate(pageId), ratings:state.pages[pageId].ratings, tasks:data.pages[pageId].tasks })); const chartMax = Math.max(1, ...Object.values(summary.counts)); const chartItems = [['Ještě ne','yet-not','#fef08a'],['Částečně','partly','#facc15'],['Téměř','almost','#fb923c'],['Úplně','done','#fca5a5']]; container.innerHTML = `<header class="page-header"><a class="header-home" href="index.html">← Digiříše</a><div class="header-title"><h1>${page.title}</h1><p>Souhrn celé cesty všemi 9 místy Digiříše</p></div><div class="header-progress"><strong>Vyplněno ${summary.filled} z ${summary.total}</strong><div class="progress-line"><span style="width:${Math.round(summary.filled / summary.total * 100)}%"></span></div></div><div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;"><button class="header-print" type="button" id="print-summary">Vytisknout</button></div></header><main class="summary-main"><section class="summary-panel"><div class="summary-top"><div class="summary-count">Celkový přehled 45 políček</div><div class="card-badge" style="background:rgba(37,99,235,0.12);color:#1d4ed8;">Souhrnná karta</div></div><div class="legend">${ratings.map(r => `<span><b style="background:${r.color}"></b>${r.short} = ${r.label}</span>`).join('')}</div><div class="summary-grid-wrap"><div class="summary-groups">${countByPage.map(item => `<div class="summary-group"><div class="summary-group-name">${item.title}</div><div class="dot-row">${item.ratings.map((rating, idx) => `<div class="dot" data-rating="${rating || ''}" title="${item.tasks[idx]}${item.ratings[idx] ? ' — ' + (state.pages[item.pageId].dates[idx] || '') : ''}"></div>`).join('')}</div><div class="summary-group-date">${item.filled} / 5 · ${item.date}</div></div>`).join('')}</div></div></section><section class="summary-side"><div class="chart-panel"><h2>Statistika odpovědí</h2><div class="chart-grid">${chartItems.map(([label,key,color])=>{ const value = summary.counts[key]; const height = Math.max(6, Math.round((value / chartMax) * 120)); return `<div class="chart-col"><div class="chart-value">${value}</div><div class="chart-bar-wrap"><div class="chart-bar" style="height:${height}px;background:${color};"></div></div><div class="chart-label">${label}</div></div>`; }).join('')}</div></div><div class="area-panel"><h2>Postup podle oblastí</h2><div class="area-list">${countByPage.map(item => `<div class="area-item"><strong>${item.title}</strong><div class="small-progress"><span style="width:${item.filled / 5 * 100}%"></span></div><div class="area-meta">Vyplněno ${item.filled} z 5 · ${item.date}</div></div>`).join('')}</div></div></section></main>`;
-    container.querySelector('#print-summary').addEventListener('click', ()=>window.print());
+
+  function createDefaultState(){
+    const areas = {};
+    AREA_ORDER.forEach(area => { areas[area.id] = createEmptyArea(area); });
+    return { studentName: "", areas };
   }
-  document.addEventListener('DOMContentLoaded', ()=>{ if(document.body.dataset.view === 'home') renderHome(); if(document.body.dataset.view === 'page') renderTaskPage(document.body.dataset.page); if(document.body.dataset.view === 'summary') renderSummaryPage(); });
+
+  function getState(){
+    try{
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      if(!parsed) return createDefaultState();
+      const base = createDefaultState();
+      base.studentName = parsed.studentName || "";
+      AREA_ORDER.forEach(area => {
+        if(parsed.areas && parsed.areas[area.id]){
+          const a = parsed.areas[area.id];
+          base.areas[area.id].statuses = area.steps.map((_,i)=> (a.statuses && a.statuses[i]) || "");
+          base.areas[area.id].dates = area.steps.map((_,i)=> (a.dates && a.dates[i]) || "");
+          base.areas[area.id].note = a.note || "";
+          base.areas[area.id].success = a.success || "";
+        }
+      });
+      return base;
+    }catch(e){
+      return createDefaultState();
+    }
+  }
+
+  function saveState(state){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function formatDate(){
+    return new Date().toLocaleDateString("cs-CZ");
+  }
+
+  function setStudentName(value){
+    const state = getState();
+    state.studentName = value;
+    saveState(state);
+  }
+
+  function resetArea(areaId){
+    const state = getState();
+    const area = AREA_ORDER.find(a => a.id === areaId);
+    state.areas[areaId] = createEmptyArea(area);
+    saveState(state);
+  }
+
+  function resetAll(){
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  function getAreaProgress(areaId){
+    const state = getState();
+    const statuses = state.areas[areaId].statuses;
+    return statuses.filter(Boolean).length;
+  }
+
+  function getTotalProgress(){
+    const state = getState();
+    let filled = 0;
+    AREA_ORDER.forEach(area => {
+      filled += state.areas[area.id].statuses.filter(Boolean).length;
+    });
+    return filled;
+  }
+
+  function countsByStatus(){
+    const state = getState();
+    const counts = {J:0,C:0,T:0,U:0, empty:0};
+    AREA_ORDER.forEach(area => {
+      state.areas[area.id].statuses.forEach(status => {
+        if(status && counts[status] !== undefined){ counts[status] += 1; }
+        else { counts.empty += 1; }
+      });
+    });
+    return counts;
+  }
+
+  function recentUpdates(limit){
+    const state = getState();
+    const items = [];
+    AREA_ORDER.forEach(area => {
+      const record = state.areas[area.id];
+      area.steps.forEach((step, index) => {
+        if(record.statuses[index]){
+          items.push({
+            areaId: area.id,
+            areaTitle: area.title,
+            step,
+            stepIndex: index + 1,
+            status: record.statuses[index],
+            date: record.dates[index] || ""
+          });
+        }
+      });
+    });
+    items.sort((a,b) => (b.date || "").localeCompare(a.date || ""));
+    return items.slice(0, limit);
+  }
+
+  function renderNameFields(){
+    const state = getState();
+    document.querySelectorAll('[data-student-name]').forEach(input => {
+      input.value = state.studentName || "";
+      input.addEventListener("input", e => {
+        setStudentName(e.target.value);
+      });
+    });
+  }
+
+  function renderMainPage(){
+    const cards = document.getElementById("cardsGrid");
+    if(!cards) return;
+    const total = getTotalProgress();
+    const counts = countsByStatus();
+
+    const planCard = `
+      <a href="plan-meho-postupu.html" class="card-link">
+        <article class="place-card plan-card">
+          <div class="bg" style="background: linear-gradient(180deg,#ebf6ff 0%, #dff1ff 55%, #f7fbff 100%);"></div>
+          <div class="wash"></div>
+          <div class="content">
+            <div class="card-top">
+              <div class="icon-bubble">${MAIN_ICONS.plan}</div>
+              <span class="card-badge">Souhrnná karta</span>
+            </div>
+            <div>
+              <h3>Plán mého postupu</h3>
+              <div class="subtitle">Souhrn celé hry</div>
+            </div>
+            <div class="plan-stats-mini">
+              <div class="mini-stat">Vyplněno<br><strong>${total} z 45</strong></div>
+              <div class="mini-stat">J: ${counts.J} · Č: ${counts.C}<br><strong>T: ${counts.T} · Ú: ${counts.U}</strong></div>
+            </div>
+            <div class="card-footer">
+              <span class="area-progress">Otevřít</span>
+              <span>→</span>
+            </div>
+          </div>
+        </article>
+      </a>`;
+
+    const areaCards = AREA_ORDER.map(area => {
+      const progress = getAreaProgress(area.id);
+      const badge = area.badge ? `<span class="card-badge">${area.badge}</span>` : `<span class="card-badge">Oblast Digiříše</span>`;
+      return `
+        <a href="${area.file}" class="card-link">
+          <article class="place-card">
+            <div class="bg" style="background-image:url('assets/${area.image}')"></div>
+            <div class="wash"></div>
+            <div class="content">
+              <div class="card-top">
+                <div class="icon-bubble">${MAIN_ICONS[area.id] || "✨"}</div>
+                ${badge}
+              </div>
+              <div>
+                <h3>${area.title}</h3>
+                <div class="subtitle">${area.subtitle}</div>
+              </div>
+              <div class="desc">${area.description}</div>
+              <div class="card-footer">
+                <span class="area-progress">Vyplněno ${progress} z 5</span>
+                <span>Otevřít →</span>
+              </div>
+            </div>
+          </article>
+        </a>`;
+    }).join("");
+
+    cards.innerHTML = planCard + areaCards;
+
+    const totalEl = document.getElementById("mainTotalProgress");
+    if(totalEl) totalEl.textContent = `${total} z 45`;
+  }
+
+  function createLegendRow(){
+    return `
+      <div class="legend-row">
+        ${["J","C","T","U"].map(key => `
+          <div class="legend-chip"><span class="legend-dot" style="background:${STATUS[key].color}"></span>${key} = ${STATUS[key].label}</div>
+        `).join("")}
+      </div>`;
+  }
+
+  function renderAreaPage(){
+    const page = document.body.dataset.page;
+    if(page !== "area") return;
+    const areaId = document.body.dataset.area;
+    const area = AREA_ORDER.find(a => a.id === areaId);
+    if(!area) return;
+    const state = getState();
+    const areaState = state.areas[areaId];
+    const titleEl = document.getElementById("areaPageTitle");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroDesc = document.getElementById("heroDesc");
+    const heroVisual = document.getElementById("heroVisual");
+    if(titleEl) titleEl.textContent = area.title;
+    if(heroTitle) heroTitle.textContent = area.title;
+    if(heroDesc) heroDesc.textContent = area.description;
+    if(heroVisual) heroVisual.style.backgroundImage = `url('assets/${area.image}')`;
+    const miniProgress = document.getElementById("areaProgress");
+    if(miniProgress) miniProgress.textContent = `${areaState.statuses.filter(Boolean).length} z 5`;
+    const legendTarget = document.getElementById("legendTarget");
+    if(legendTarget) legendTarget.innerHTML = createLegendRow();
+
+    const stepsTarget = document.getElementById("stepsTarget");
+    if(stepsTarget){
+      stepsTarget.innerHTML = area.steps.map((step, index) => `
+        <article class="step-card">
+          <div class="step-num">${index + 1}</div>
+          <div class="step-text">
+            <strong>${step}</strong>
+            <div class="step-date">Datum zápisu: ${areaState.dates[index] || "—"}</div>
+          </div>
+          <div class="status-buttons">
+            ${["J","C","T","U"].map(status => `
+              <button class="status-btn ${areaState.statuses[index] === status ? "active" : ""}" data-status="${status}" data-step-index="${index}" title="${STATUS[status].label}">
+                ${status}
+              </button>
+            `).join("")}
+          </div>
+        </article>
+      `).join("");
+      stepsTarget.querySelectorAll(".status-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const stepIndex = Number(btn.dataset.stepIndex);
+          const stateNow = getState();
+          stateNow.areas[areaId].statuses[stepIndex] = btn.dataset.status;
+          stateNow.areas[areaId].dates[stepIndex] = formatDate();
+          saveState(stateNow);
+          renderAreaPage();
+        });
+      });
+    }
+
+    const note = document.getElementById("areaNote");
+    const success = document.getElementById("areaSuccess");
+    if(note){
+      note.value = areaState.note || "";
+      note.addEventListener("input", e => {
+        const s = getState();
+        s.areas[areaId].note = e.target.value;
+        saveState(s);
+      });
+    }
+    if(success){
+      success.value = areaState.success || "";
+      success.addEventListener("input", e => {
+        const s = getState();
+        s.areas[areaId].success = e.target.value;
+        saveState(s);
+      });
+    }
+
+    const resetBtn = document.getElementById("resetAreaBtn");
+    if(resetBtn){
+      resetBtn.onclick = () => {
+        if(confirm(`Vymazat postup v oblasti „${area.title}“?`)){
+          resetArea(areaId);
+          renderAreaPage();
+          renderNameFields();
+        }
+      };
+    }
+  }
+
+  function renderPlanPage(){
+    const page = document.body.dataset.page;
+    if(page !== "plan") return;
+    const planTotals = document.querySelectorAll("[data-plan-total]");
+    const counts = countsByStatus();
+    const total = getTotalProgress();
+    planTotals.forEach(el => el.textContent = `${total} z 45`);
+    const overallPct = document.getElementById("overallPct");
+    if(overallPct) overallPct.textContent = `${Math.round((total/45)*100)} %`;
+
+    ["J","C","T","U"].forEach(key => {
+      const el = document.getElementById(`count-${key}`);
+      if(el) el.textContent = counts[key];
+    });
+
+    const chart = document.getElementById("chartBars");
+    if(chart){
+      const max = Math.max(1, counts.J, counts.C, counts.T, counts.U);
+      chart.innerHTML = ["J","C","T","U"].map(key => {
+        const h = Math.round((counts[key]/max)*100);
+        return `
+          <div class="chart-col">
+            <div class="chart-track">
+              <div class="chart-fill" style="height:${h}%; background:${STATUS[key].color};"></div>
+            </div>
+            <div class="chart-value">${counts[key]}</div>
+            <div class="chart-label">${key}</div>
+          </div>`;
+      }).join("");
+    }
+
+    const cells = document.getElementById("planGrid");
+    if(cells){
+      const state = getState();
+      const all = [];
+      AREA_ORDER.forEach(area => {
+        area.steps.forEach((step, index) => {
+          const status = state.areas[area.id].statuses[index];
+          const date = state.areas[area.id].dates[index];
+          all.push({area, step, index, status, date});
+        });
+      });
+      cells.innerHTML = all.map((item, i) => {
+        const cls = item.status ? `status-${item.status}` : "empty";
+        const title = `${item.area.title} • ${item.step} • ${item.status ? STATUS[item.status].label : "Nevyplněno"}${item.date ? " • " + item.date : ""}`;
+        return `<div class="plan-cell ${cls}" title="${title}">${i+1}</div>`;
+      }).join("");
+    }
+
+    const areasList = document.getElementById("areasList");
+    if(areasList){
+      areasList.innerHTML = AREA_ORDER.map(area => {
+        const done = getAreaProgress(area.id);
+        return `<div class="area-row"><strong>${area.title}</strong><span>${done} z 5</span></div>`;
+      }).join("");
+    }
+
+    const recent = document.getElementById("recentList");
+    if(recent){
+      const items = recentUpdates(8);
+      recent.innerHTML = items.length ? items.map(item => `
+        <div class="recent-item">
+          <div><strong>${item.areaTitle}</strong><div class="note">Krok ${item.stepIndex}: ${item.step}</div></div>
+          <div>${item.date || "—"}</div>
+        </div>
+      `).join("") : `<div class="card-hint">Zatím tu nejsou žádné záznamy. Otevři některou kartu a označ svůj postup.</div>`;
+    }
+
+    const resetAllBtn = document.getElementById("resetAllBtn");
+    if(resetAllBtn){
+      resetAllBtn.onclick = () => {
+        if(confirm("Vymazat úplně všechno v celé Digiříši?")){
+          resetAll();
+          location.reload();
+        }
+      };
+    }
+  }
+
+  function initCommon(){
+    renderNameFields();
+    const nameHeadline = document.getElementById("studentNameLabel");
+    if(nameHeadline){
+      nameHeadline.textContent = getState().studentName || "bez jména";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initCommon();
+    renderMainPage();
+    renderAreaPage();
+    renderPlanPage();
+  });
 })();
