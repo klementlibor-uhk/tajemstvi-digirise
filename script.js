@@ -376,6 +376,9 @@
     if(nameHeadline){
       nameHeadline.textContent = getState().studentName || "bez jména";
     }
+    document.querySelectorAll("[data-print-main]").forEach(btn => {
+      btn.addEventListener("click", () => window.print());
+    });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
