@@ -1,10 +1,10 @@
 
 (function(){
   const STATUS = {
-    J: { label: "Ještě ne", color: "var(--status-j)" },
-    C: { label: "Částečně", color: "var(--status-c)" },
-    T: { label: "Téměř", color: "var(--status-t)" },
-    U: { label: "Úplně", color: "var(--status-u)" }
+    J: { label: "Ještě ne", short: "J", color: "var(--status-j)" },
+    C: { label: "Částečně", short: "Č", color: "var(--status-c)" },
+    T: { label: "Téměř", short: "T", color: "var(--status-t)" },
+    U: { label: "Úplně", short: "Ú", color: "var(--status-u)" }
   };
   const AREA_ORDER = window.DIGIRISE_AREAS || [];
   const STORAGE_KEY = "digirise-progress-v4";
@@ -204,7 +204,7 @@
     return `
       <div class="legend-row">
         ${["J","C","T","U"].map(key => `
-          <div class="legend-chip"><span class="legend-dot" style="background:${STATUS[key].color}"></span>${key} = ${STATUS[key].label}</div>
+          <div class="legend-chip"><span class="legend-dot" style="background:${STATUS[key].color}"></span>${STATUS[key].short} = ${STATUS[key].label}</div>
         `).join("")}
       </div>`;
   }
@@ -242,7 +242,7 @@
           <div class="status-buttons">
             ${["J","C","T","U"].map(status => `
               <button class="status-btn ${areaState.statuses[index] === status ? "active" : ""}" data-status="${status}" data-step-index="${index}" title="${STATUS[status].label}">
-                ${status}
+                ${STATUS[status].short}
               </button>
             `).join("")}
           </div>
@@ -317,7 +317,7 @@
               <div class="chart-fill" style="height:${h}%; background:${STATUS[key].color};"></div>
             </div>
             <div class="chart-value">${counts[key]}</div>
-            <div class="chart-label">${key}</div>
+            <div class="chart-label">${STATUS[key].short}</div>
           </div>`;
       }).join("");
     }
